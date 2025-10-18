@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CreaIA | Remodelador de Espacios</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fuente Inter (base), Pacifico (para el título) y AHORA Josefin Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Pacifico&family=Josefin+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS PARA FONDO ANIMADO DEL BODY --- */
+        @keyframes background-motion {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        body {
+            font-family: 'Josefin Sans', sans-serif; /* CAMBIADO a Josefin Sans */
+            background-color: #f7f9fb;
+            /* Aplicación del fondo animado */
+            background: linear-gradient(135deg, #a7f3d0, #67e8f9, #818cf8, #c4b5fd);
+            background-size: 400% 400%;
+            animation: background-motion 25s ease infinite; 
+            /* Estilos existentes */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 1rem;
+        }
+        /* Estilo de tarjeta más suave para el look de aplicación */
+        .card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .btn-primary {
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.3), 0 2px 4px -2px rgba(124, 58, 237, 0.2);
+        }
+        /* Contenedor principal para simular la vista de una app */
+        .app-container {
+            max-width: 480px; /* Ancho típico de un móvil grande */
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Estilos para el Título Animado (azul marino) --- */
+        @keyframes pulse-color {
+            0% { color: #1A2B5B; transform: scale(1.0); } /* Azul marino oscuro */
+            50% { color: #2C4270; transform: scale(1.01); } /* Un tono más claro de azul marino */
+            100% { color: #1A2B5B; transform: scale(1.0); }
+        }
+
+        .title-motion {
+            animation: pulse-color 3s infinite ease-in-out;
+            display: inline-block; /* Necesario para que la transformación funcione */
+        }
+
+        /* Clase para la fuente Pacifico */
+        .font-pacifico {
+            font-family: 'Pacifico', cursive;
+        }
+        
+        /* Estilo específico para la animación de los botones de carga */
+        .animated-btn {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .animated-btn:hover {
+            transform: translateY(-2px); /* Eleva ligeramente el botón */
+            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4); /* Sombra azul para el efecto */
+        }
+
+        /* --- NUEVO CSS PARA EFECTO PINCELADA EN EL TÍTULO --- */
+        .painted-title {
+            position: relative;
+            z-index: 10;
+        }
+        .painted-title::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120%; /* Ancho de la pincelada */
+            height: 110%; /* Alto de la pincelada */
+            /* Transforma, centra y rota ligeramente para el efecto a mano */
+            transform: translate(-50%, -50%) rotate(-3deg); 
+            /* Degradado de colores cálidos */
+            background: linear-gradient(135deg, #FFC107, #FF5722, #F44336); 
+            /* Forma irregular para simular un trazo de pincel */
+            border-radius: 60% 80% 65% 55% / 50% 50% 70% 80%; 
+            opacity: 0.5;
+            filter: blur(6px); /* Suaviza los bordes como una pincelada suave */
+            z-index: -1; /* Posiciona detrás del texto */
+        }
+
+        /* Estilo para el área de detalles de materiales */
+        #materialDetails {
+            white-space: pre-wrap;
+            background-color: #f0f4f8;
+            border-left: 4px solid #4f46e5;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex justify-center p-4 sm:p-8">
+
+    <!-- Contenedor principal más estrecho para simular el look de app -->
+    <div class="app-container w-full bg-white rounded-2xl lg:min-h-screen overflow-hidden">
+        <header class="text-center pt-8 pb-4 bg-indigo-50 border-b border-indigo-100">
+            <!-- Título con Logo, Fuente Pacifico, color azul marino y efecto de movimiento -->
+            <!-- Se agregó la clase 'painted-title' aquí -->
+            <h1 class="text-4xl font-bold font-pacifico flex items-center justify-center space-x-2 painted-title">
+                <!-- SVG Logo: Estilizado para representar la herramienta de diseño (Lápiz) -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 title-motion" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #1A2B5B;">
+                    <path d="M12 20h9"/>
+                    <!-- Icono de lápiz/edición -->
+                    <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+                <span class="title-motion" style="color: #1A2B5B;">CreaIA</span>
+            </h1>
+            <p class="text-gray-500 mt-1 text-sm">Genera tus Cambios al Instante</p>
+        </header>
+
+        <main class="p-6 space-y-6">
+            
+            <!-- Bloque 1: Subir Foto -->
+            <section class="card bg-gray-50 p-4 rounded-xl">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                    <span class="bg-indigo-500 text-white w-6 h-6 flex items-center justify-center rounded-full mr-2 text-sm">1</span>
+                    Subir Foto
+                </h2>
+
+                <!-- Botones de Carga con Animación -->
+                <div class="flex space-x-4 mb-4">
+                    <!-- Botón para Cámara -->
+                    <button id="cameraButton" class="w-1/2 py-3 px-4 bg-purple-600 text-white font-bold rounded-xl text-sm hover:bg-purple-700 transition duration-150 flex items-center justify-center btn-primary animated-btn">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.218A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.218A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        Cámara
+                    </button>
+                    <!-- Botón para Galería -->
+                    <button id="galleryButton" class="w-1/2 py-3 px-4 bg-indigo-600 text-white font-bold rounded-xl text-sm hover:bg-indigo-700 transition duration-150 flex items-center justify-center btn-primary animated-btn">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Galería
+                    </button>
+                </div>
+                
+                <!-- Inputs de Archivo Ocultos -->
+                <input type="file" id="fileInputGallery" accept="image/*" class="hidden" />
+                <input type="file" id="fileInputCamera" accept="image/*" capture="camera" class="hidden" />
+
+
+                <!-- Previsualización de la Imagen: Altura ajustada para móvil -->
+                <div id="imagePreviewContainer" class="relative bg-gray-200 border-2 border-dashed border-gray-400 rounded-lg min-h-48 max-h-64 h-auto flex justify-center items-center overflow-hidden">
+                    <img id="originalImage" src="" alt="Previsualización de la Imagen Original" class="w-full h-full object-contain hidden" />
+                    <span id="previewPlaceholder" class="text-gray-500 text-center p-4 text-sm">Sube o toma una foto para comenzar.</span>
+                </div>
+            </section>
+
+            <!-- Bloque 2: Descripción y Botón -->
+            <section class="card bg-white p-4 rounded-xl">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                    <span class="bg-indigo-500 text-white w-6 h-6 flex items-center justify-center rounded-full mr-2 text-sm">2</span>
+                    Describe tu Idea
+                </h2>
+                <!-- Prompt de Texto -->
+                <textarea id="promptText" rows="3" placeholder="Ej: Estilo minimalista, paredes verde menta, muebles de madera clara. O: Remodela este patio para convertirlo en un jardín zen." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 mb-4 resize-none"></textarea>
+                
+                <!-- Área de Mensajes -->
+                <div id="messageBox" class="mt-2 text-sm p-3 rounded-xl hidden" role="alert"></div>
+
+                <!-- Botón Generar -->
+                <button id="generateButton" onclick="generateRemodelIdea()" class="btn-primary w-full py-3 px-4 bg-indigo-600 text-white font-bold rounded-xl text-lg hover:bg-indigo-700 disabled:opacity-50 mt-2" disabled>
+                    Generar Idea de Remodelación
+                </button>
+            </section>
+            
+            <!-- Bloque 3: Resultado de la IA -->
+            <section class="card bg-white p-4 rounded-xl mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                    <span class="bg-indigo-500 text-white w-6 h-6 flex items-center justify-center rounded-full mr-2 text-sm">3</span>
+                    Resultado de la IA
+                </h2>
+
+                <!-- Resultado -->
+                <div id="resultContainer" class="relative bg-gray-200 rounded-lg min-h-80 flex justify-center items-center overflow-hidden">
+                    <!-- Indicador de Carga -->
+                    <div id="loadingIndicator" class="hidden flex-col items-center p-8">
+                        <svg class="animate-spin -ml-1 mr-3 h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p class="mt-4 text-indigo-600 font-medium">Generando tu idea de diseño...</p>
+                        <p class="mt-1 text-xs text-gray-500">Esto puede tardar unos segundos.</p>
+                    </div>
+
+                    <img id="resultImage" src="" alt="Imagen Remodelada por IA" class="w-full h-full object-contain hidden" />
+                    <span id="resultPlaceholder" class="text-gray-500 text-center p-4 text-sm">La imagen con la idea de diseño aparecerá aquí.</span>
+                </div>
+
+                <!-- Botones de Acción (Descargar y DETALLES) -->
+                <div id="actionButtons" class="mt-4 flex flex-col space-y-3 hidden">
+                    <!-- Nuevo Botón para Generar Detalles y Materiales (Feature 2) -->
+                    <button id="detailsButton" onclick="generateMaterialDetails()" class="w-full py-3 px-4 bg-indigo-500 text-white font-bold rounded-xl text-sm hover:bg-indigo-600 transition duration-150 flex items-center justify-center btn-primary">
+                        <span id="detailsText">✨ Detalles y Materiales</span>
+                        <span id="detailsLoading" class="hidden">Analizando...</span>
+                    </button>
+                    <!-- Botón de Descargar -->
+                    <button id="downloadButton" onclick="downloadImage()" class="w-full py-3 px-4 bg-green-600 text-white font-bold rounded-xl text-sm hover:bg-green-700 transition duration-150 flex items-center justify-center btn-primary">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Descargar al Móvil
+                    </button>
+                </div>
+
+                <!-- Área para mostrar los detalles y materiales generados por la IA de texto -->
+                <div id="materialDetailsContainer" class="mt-4 hidden">
+                    <p class="text-md font-semibold text-gray-700 mb-2">Análisis de Diseño por IA:</p>
+                    <div id="materialDetails" class="p-4 rounded-xl text-gray-800 text-sm">
+                        <!-- Los detalles de los materiales irán aquí -->
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <script type="module">
+        // Global variables for Firebase configuration (Mandatory for Canvas environment)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+        // API Configuration
+        const IMAGE_MODEL_NAME = "gemini-2.5-flash-image-preview"; // Para la generación de la imagen final (IMG-TO-IMG)
+        const TEXT_MODEL_NAME = "gemini-2.5-flash-preview-09-2025"; // Para la generación de la lista de materiales (TEXT)
+        const API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
+        const API_KEY = ""; // Canvas will provide this if empty
+
+        // UI Elements
+        const fileInputGallery = document.getElementById('fileInputGallery');
+        const fileInputCamera = document.getElementById('fileInputCamera');
+        const cameraButton = document.getElementById('cameraButton');
+        const galleryButton = document.getElementById('galleryButton');
+        const originalImage = document.getElementById('originalImage');
+        const previewPlaceholder = document.getElementById('previewPlaceholder');
+        const promptText = document.getElementById('promptText');
+        const generateButton = document.getElementById('generateButton');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const resultImage = document.getElementById('resultImage');
+        const resultPlaceholder = document.getElementById('resultPlaceholder');
+        const messageBox = document.getElementById('messageBox');
+        const actionButtons = document.getElementById('actionButtons'); // Contenedor de botones
+
+        // Nuevo UI para la función de Materiales
+        const detailsButton = document.getElementById('detailsButton');
+        const detailsText = document.getElementById('detailsText');
+        const detailsLoading = document.getElementById('detailsLoading');
+        const materialDetailsContainer = document.getElementById('materialDetailsContainer');
+        const materialDetails = document.getElementById('materialDetails');
+
+
+        let base64Image = null; // Original image in Base64
+        let base64ResultImage = null; // Generated image in Base64
+        let mimeType = null;
+        let lastUserPrompt = ''; // Store the last prompt used for generation
+
+        // --- Event Listeners para botones de Carga ---
+
+        // Listener para disparar el input de la cámara
+        cameraButton.addEventListener('click', () => fileInputCamera.click());
+        // Listener para disparar el input de la galería
+        galleryButton.addEventListener('click', () => fileInputGallery.click());
+
+        // Listener para habilitar/deshabilitar el botón de generación
+        promptText.addEventListener('input', () => {
+            // Requiere que la imagen esté cargada y que el prompt tenga al menos 10 caracteres
+            generateButton.disabled = !(base64Image && promptText.value.trim().length > 10);
+        });
+
+        // --- Lógica de Carga de Archivo ---
+
+        fileInputGallery.addEventListener('change', handleFileChange);
+        fileInputCamera.addEventListener('change', handleFileChange);
+
+        async function handleFileChange(event) {
+            const file = event.target.files[0];
+            
+            // Restablecer el valor de los inputs de archivo para permitir recargar la misma imagen
+            fileInputGallery.value = '';
+            fileInputCamera.value = '';
+
+            if (!file) {
+                // Limpiar estado si la selección se cancela
+                base64Image = null;
+                base64ResultImage = null;
+                mimeType = null;
+                originalImage.classList.add('hidden');
+                previewPlaceholder.classList.remove('hidden');
+                generateButton.disabled = true;
+                actionButtons.classList.add('hidden'); // Ocultar botones de acción
+                materialDetailsContainer.classList.add('hidden'); // Ocultar detalles
+                return;
+            }
+
+            // Chequeo de tamaño de archivo (máx 4MB)
+            if (file.size > 4 * 1024 * 1024) {
+                displayMessage('Error: La imagen es demasiado grande. Por favor, sube una imagen de menos de 4MB.', 'error');
+                base64Image = null;
+                generateButton.disabled = true;
+                actionButtons.classList.add('hidden');
+                materialDetailsContainer.classList.add('hidden');
+                return;
+            }
+
+            try {
+                // Leer y mostrar la previsualización
+                const imageUrl = URL.createObjectURL(file);
+                originalImage.src = imageUrl;
+                originalImage.classList.remove('hidden');
+                previewPlaceholder.classList.add('hidden');
+                actionButtons.classList.add('hidden'); // Ocultar botones de acción si se carga una nueva imagen
+                materialDetailsContainer.classList.add('hidden'); // Ocultar detalles
+
+                // Convertir a Base64 para la API
+                base64Image = await fileToBase64(file);
+                mimeType = file.type;
+                base64ResultImage = null; // Clear old result
+
+                // Habilitar botón de generar si ya hay suficiente texto en el prompt
+                if (promptText.value.trim().length > 10) {
+                    generateButton.disabled = false;
+                }
+
+                displayMessage('Imagen cargada. Ya puedes escribir tu idea y generar.', 'info');
+            } catch (error) {
+                console.error("Error al cargar la imagen:", error);
+                displayMessage('Error al procesar la imagen. Intenta con otro archivo.', 'error');
+                base64Image = null;
+                base64ResultImage = null;
+                generateButton.disabled = true;
+                actionButtons.classList.add('hidden');
+                materialDetailsContainer.classList.add('hidden');
+            }
+        }
+        
+        /**
+         * Convierte un objeto File a una cadena Base64.
+         */
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        /**
+         * Limpia y muestra un mensaje en la caja de mensajes.
+         */
+        function displayMessage(text, type) {
+            messageBox.textContent = text;
+            messageBox.className = 'mt-2 text-sm p-3 rounded-xl';
+            messageBox.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700', 'bg-blue-100', 'text-blue-700');
+
+            if (type === 'error') {
+                messageBox.classList.add('bg-red-100', 'text-red-700', 'border', 'border-red-300');
+            } else if (type === 'success') {
+                messageBox.classList.add('bg-green-100', 'text-green-700', 'border', 'border-green-300');
+            } else {
+                messageBox.classList.add('bg-blue-100', 'text-blue-700', 'border', 'border-blue-300');
+            }
+        }
+
+
+        // --- Lógica Principal de Generación de Imagen (IMG-TO-IMG) ---
+
+        // Define la función principal en el alcance global para ser llamada desde HTML
+        window.generateRemodelIdea = async function() {
+            if (!base64Image) {
+                displayMessage('Por favor, primero sube una imagen.', 'error');
+                return;
+            }
+            const prompt = promptText.value.trim();
+            if (!prompt || prompt.length < 10) {
+                displayMessage('Por favor, escribe una descripción detallada (mínimo 10 caracteres).', 'error');
+                return;
+            }
+
+            // Guardar el prompt actual
+            lastUserPrompt = prompt;
+
+            // Estado de la UI: Deshabilitar botón, mostrar carga
+            generateButton.disabled = true;
+            loadingIndicator.classList.remove('hidden');
+            resultImage.classList.add('hidden');
+            resultPlaceholder.classList.add('hidden');
+            actionButtons.classList.add('hidden'); // Ocultar botones de acción
+            materialDetailsContainer.classList.add('hidden'); // Ocultar detalles
+            displayMessage('Enviando tu solicitud a CreaIA... ¡Espera un momento!', 'info');
+            
+            try {
+                base64ResultImage = await generateImage(prompt, base64Image, mimeType);
+                const imageUrl = `data:image/png;base64,${base64ResultImage}`;
+                
+                // Estado de la UI: Mostrar resultado
+                resultImage.src = imageUrl;
+                resultImage.classList.remove('hidden');
+                actionButtons.classList.remove('hidden'); // Mostrar botones de acción
+                displayMessage('¡Idea de remodelación generada con éxito! Ahora puedes descargarla o analizar sus detalles.', 'success');
+
+            } catch (error) {
+                console.error("Error during image generation:", error);
+                resultPlaceholder.classList.remove('hidden');
+                displayMessage(`Error al generar la imagen. ${error.message || 'Hubo un problema con la API.'}`, 'error');
+            } finally {
+                // Estado de la UI: Restaurar botón, ocultar carga
+                loadingIndicator.classList.add('hidden');
+                generateButton.disabled = false;
+            }
+        };
+
+
+        /**
+         * Llama a la API de Gemini (Imagen) para generar la imagen usando la imagen de entrada y el prompt.
+         * Retorna la cadena Base64 de la imagen generada.
+         */
+        async function generateImage(userPrompt, base64Data, imageMimeType, maxRetries = 5) {
+            const url = `${API_BASE_URL}/${IMAGE_MODEL_NAME}:generateContent?key=${API_KEY}`;
+            let lastError = null;
+
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
+                const delay = Math.pow(2, attempt) * 1000; // Retroceso exponencial
+
+                // Preparar el prompt para ser explícito sobre la tarea de edición de imagen
+                const fullPrompt = `Usando la imagen provista de un espacio (sala, patio, cocina, etc.), genera una imagen nueva que implemente la siguiente idea de diseño/remodelación: "${userPrompt}"`;
+
+                const payload = {
+                    contents: [{
+                        parts: [
+                            { text: fullPrompt },
+                            { inlineData: { mimeType: imageMimeType, data: base64Data } }
+                        ]
+                    }],
+                    generationConfig: {
+                        responseModalities: ["IMAGE"]
+                    },
+                };
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429 || response.status >= 500) {
+                        lastError = new Error(`Error de servidor (${response.status}). Reintentando en ${delay / 1000}s...`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    }
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(`Error de API: ${errorData.error?.message || response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    const base64ImagePart = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+                    const base64Data = base64ImagePart?.inlineData?.data;
+
+                    if (!base64Data) {
+                        throw new Error("La IA no devolvió una imagen válida. Intenta con un prompt más específico o una imagen diferente.");
+                    }
+
+                    return base64Data;
+
+                } catch (error) {
+                    lastError = error;
+                    if (attempt === maxRetries - 1) {
+                         throw lastError; // Relanzar el error final
+                    }
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+            throw lastError;
+        }
+
+        // --- NUEVA LÓGICA: Generación de Detalles y Materiales (TEXT) ---
+
+        window.generateMaterialDetails = async function() {
+            if (!base64ResultImage) {
+                displayMessage('Primero debes generar la imagen de remodelación (Paso 2) antes de solicitar los detalles.', 'error');
+                return;
+            }
+
+            // Estado de la UI: Deshabilitar botón, mostrar carga
+            detailsButton.disabled = true;
+            detailsText.classList.add('hidden');
+            detailsLoading.classList.remove('hidden');
+            materialDetailsContainer.classList.remove('hidden');
+            materialDetails.innerHTML = '<p class="text-center text-indigo-500">Analizando el diseño para extraer materiales...</p>';
+
+
+            try {
+                const result = await generateTextAnalysis(base64ResultImage, lastUserPrompt);
+                
+                // Mostrar resultado
+                materialDetails.innerHTML = result;
+                displayMessage('Análisis de diseño completado.', 'success');
+            } catch (error) {
+                console.error("Error during text analysis:", error);
+                materialDetails.innerHTML = '<p class="text-red-500">Error al generar el análisis de materiales. Intenta de nuevo.</p>';
+                displayMessage(`Error al analizar la imagen: ${error.message || 'Problema de conexión con la IA de texto.'}`, 'error');
+            } finally {
+                // Restaurar estado del botón
+                detailsButton.disabled = false;
+                detailsText.classList.remove('hidden');
+                detailsLoading.classList.add('hidden');
+            }
+        };
+
+        /**
+         * Llama a la API de Gemini (Texto) para analizar la imagen y el prompt y generar un resumen de materiales.
+         * Retorna el texto del análisis.
+         */
+        async function generateTextAnalysis(base64Data, userPrompt, maxRetries = 3) {
+            const url = `${API_BASE_URL}/${TEXT_MODEL_NAME}:generateContent?key=${API_KEY}`;
+            let lastError = null;
+
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
+                const delay = Math.pow(2, attempt) * 1000;
+
+                const systemPrompt = `Actúa como un diseñador de interiores. Analiza la imagen de diseño generada y la idea original. Proporciona una lista concisa y bien formateada (usando Markdown) de los elementos clave de la remodelación. Incluye una sección para 'Paleta de Colores', 'Materiales Sugeridos' y 'Estilo/Concepto'. Usa viñetas para las listas y sé útil para un proyecto de bricolaje. Responde únicamente en español.`;
+
+                const userQuery = `La imagen generada implementa el diseño: "${userPrompt}". Describe la imagen final analizando qué materiales (suelos, paredes, telas) y colores debería comprar el usuario.`;
+
+                const payload = {
+                    contents: [{
+                        role: "user",
+                        parts: [
+                            { text: userQuery },
+                            { inlineData: { mimeType: 'image/png', data: base64Data } }
+                        ]
+                    }],
+                    systemInstruction: {
+                        parts: [{ text: systemPrompt }]
+                    }
+                };
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429 || response.status >= 500) {
+                        lastError = new Error(`Error de servidor (${response.status}). Reintentando en ${delay / 1000}s...`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    }
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(`Error de API: ${errorData.error?.message || response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                    if (!text) {
+                        throw new Error("La IA de texto no pudo generar el análisis.");
+                    }
+                    
+                    // Convertir Markdown simple a HTML para display
+                    let htmlResult = text;
+                    htmlResult = htmlResult.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Negritas
+                    htmlResult = htmlResult.replace(/^- (.*)/gm, '<li>$1</li>'); // Viñetas (asume lista simple)
+                    htmlResult = htmlResult.replace(/(Paleta de Colores|Materiales Sugeridos|Estilo\/Concepto):/g, '<h4 class="font-bold mt-3 mb-1 text-indigo-700">$1</h4>'); // Títulos de sección
+
+                    return `<div>${htmlResult}</div>`;
+
+                } catch (error) {
+                    lastError = error;
+                    if (attempt === maxRetries - 1) {
+                         throw lastError;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+            throw lastError;
+        }
+
+
+        // --- Lógica de Descarga ---
+
+        window.downloadImage = function() {
+            const imageUrl = resultImage.src;
+            if (!imageUrl || resultImage.classList.contains('hidden')) {
+                displayMessage('No hay una imagen generada para descargar.', 'error');
+                return;
+            }
+
+            // Crear un enlace temporal para forzar la descarga
+            const a = document.createElement('a');
+            a.href = imageUrl;
+            a.download = 'CreaIA_Diseno_Remodelado.png'; // Nombre del archivo, que se guardará en la carpeta de Descargas/Fotos
+            document.body.appendChild(a);
+            
+            // Usamos un pequeño timeout para aumentar la fiabilidad del clic en algunos navegadores móviles
+            setTimeout(() => {
+                a.click();
+                document.body.removeChild(a);
+                displayMessage('¡Descarga iniciada! Busca el archivo en tu carpeta de Fotos o Descargas.', 'success');
+            }, 50); 
+        };
+
+    </script>
