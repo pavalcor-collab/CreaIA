@@ -239,7 +239,9 @@
         const IMAGE_MODEL_NAME = "gemini-2.5-flash-image-preview"; // Para la generación de la imagen final (IMG-TO-IMG)
         const TEXT_MODEL_NAME = "gemini-2.5-flash-preview-09-2025"; // Para la generación de la lista de materiales (TEXT)
         const API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
-        const API_KEY = ""; // Canvas will provide this if empty
+        
+        // MODIFICACIÓN CRÍTICA: Lee la clave de una variable de entorno inyectada por Netlify (GEMINI_API_KEY)
+        const API_KEY = window.GEMINI_API_KEY || ""; 
 
         // UI Elements
         const fileInputGallery = document.getElementById('fileInputGallery');
@@ -434,6 +436,11 @@
             const url = `${API_BASE_URL}/${IMAGE_MODEL_NAME}:generateContent?key=${API_KEY}`;
             let lastError = null;
 
+            // Validar si la API_KEY está disponible
+            if (!API_KEY) {
+                 throw new Error("Clave de API no configurada. Por favor, configura la variable de entorno GEMINI_API_KEY en Netlify.");
+            }
+
             for (let attempt = 0; attempt < maxRetries; attempt++) {
                 const delay = Math.pow(2, attempt) * 1000; // Retroceso exponencial
 
@@ -532,6 +539,11 @@
         async function generateTextAnalysis(base64Data, userPrompt, maxRetries = 3) {
             const url = `${API_BASE_URL}/${TEXT_MODEL_NAME}:generateContent?key=${API_KEY}`;
             let lastError = null;
+
+            // Validar si la API_KEY está disponible
+            if (!API_KEY) {
+                 throw new Error("Clave de API no configurada. Por favor, configura la variable de entorno GEMINI_API_KEY en Netlify.");
+            }
 
             for (let attempt = 0; attempt < maxRetries; attempt++) {
                 const delay = Math.pow(2, attempt) * 1000;
